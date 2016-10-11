@@ -1,7 +1,7 @@
 # For documentation see https://github.com/tjanczuk/iisnode/blob/master/src/samples/configuration/iisnode.yml
 
 # loggingEnabled: false
-# debuggingEnabled: false
+debuggingEnabled: true 
 # devErrorsEnabled: false
 # node_env: production
 # nodeProcessCountPerApplication: 1
@@ -24,4 +24,4 @@
 # logFileFlushInterval: 5000
 # flushResponse: false
 # enableXFF: false
-# promoteServerVars:  
+# promoteServerVars:
