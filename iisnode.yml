@@ -2,6 +2,7 @@
 
 loggingEnabled: true
 debuggingEnabled: true
+logDirectory: iisnode
 # devErrorsEnabled: false
 # node_env: production
 # nodeProcessCountPerApplication: 1
