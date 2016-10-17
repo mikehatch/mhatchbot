@@ -25,27 +25,60 @@ var model = 'https://api.projectoxford.ai/luis/v1/application?id=2ac782de-b92c-4
 var recognizer = new builder.LuisRecognizer(model);
 var intents = new builder.IntentDialog({recognizers: [recognizer]});
 
-
-//===============
-// Bot Dialogs
-//===============
 bot.dialog('/', intents);
-
-intents.matches('ManageProfile', [
+bot.dialog('/prefs2', [
 	function(session) {
-		session.send('It sounds like you want to update your profile.');
-		session.beginDialog('/profile');
-	},
-	function(session, results) {
-		session.send('Ok... Changed your name to %s', session.userData.name);
+		session.send('In dialog prefs2');
+		session.endDialog();
 	}
 ]);
+
+intents.matches('ManageProfile', [
+	function(session, args, next) {
+		var attribute = builder.EntityRecognizer.findEntity(args.entities, 'Attribute');
+		if(!attribute) {
+			builder.Prompts.choice(session, "Which attribute would you like to change?", ["Name", "Tool Preference"]);
+		} else {
+			next({response: attribute});
+		}
+	},
+	function(session, results) {
+		switch(results.response.entity) {
+			case "name":
+			case "Name":
+				session.replaceDialog('/profile');
+				break;
+			case "tool":
+			case "tool preference":
+			case "Tool Preference":
+			case "preference":
+				session.replaceDialog('/prefs');
+				break;
+			default:
+				session.send("Sorry I didn't recognize what you wanted to manage.");
+		}
+		// if(results.response.entity='Name') {
+		// 	session.beginDialog('/profile');
+		// 	//next();
+		// }
+		// if(results.response.entity='Tool Preference') {
+		// 	session.beginDialog('/prefs2');
+		// 	//next();
+		// }
+	},
+	function (session, results) {
+			session.send('Hello %s! Your current tool preference is %s.', session.userData.name, session.userData.toolPref);
+	}
+
+])
+
 
 intents.matches(/^goodbye/i, [
 	function(session) {
 		session.beginDialog('/goodbye');
 	}
 ])
+
 intents.onDefault([
 		function(session, args, next) {
 			if(!session.userData.name) {
@@ -54,10 +87,35 @@ intents.onDefault([
 				next();
 			}
 		},
+		function(session, args, next) {
+			if(!session.userData.toolPref) {
+				session.beginDialog('/prefs');
+			} else {
+				next();
+			}
+		},
 		function (session, results) {
-				session.send('Hello %s!', session.userData.name);
+				session.send('Hello %s! Your current tool preference is %s.', session.userData.name, session.userData.toolPref);
 		}
 ]);
+
+bot.dialog('/prefs', [
+		function(session) {
+    	 //builder.Prompts.choice(session, "What messaging tool do you prefer?", ["Skype", "Slack", "Facebook", "TXT", "Email" ]);
+			 builder.Prompts.text(session, "What messaging tool do you prefer?");
+  	},
+   	function (session, results) {
+		//session.send('Testing, results.reponse=' + results.response);
+       	session.userData.toolPref = results.response;
+		//session.send('Testing, session.userData.toolPref=' + session.userData.toolPref);
+   		session.send("Got it " + session.userData.name +
+                      	", you prefer to use " + session.userData.toolPref + ".");
+		session.endDialog();
+    }
+
+]);
+
+
 
 bot.dialog('/goodbye', [
 	function(session) {
@@ -65,14 +123,15 @@ bot.dialog('/goodbye', [
 		session.userData.name = null;
 		session.endDialog();
 	}
-])
+]);
 
 bot.dialog('/profile', [
 	function(session) {
 		builder.Prompts.text(session, "What is your name?");
 	},
 	function(session, results) {
-		session.userData.name = results.response;  //
+		session.userData.name = results.response;
+		session.send('Ok... Changed your name to %s', session.userData.name);
 		session.endDialog();
 	}
-])
+]);
