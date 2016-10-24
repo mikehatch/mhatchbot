@@ -1,5 +1,6 @@
 var restify = require('restify');
 var builder = require('botbuilder');
+var drupal = require('./drupal.js');
 
 //====================
 // Bot Setup
@@ -26,12 +27,6 @@ var recognizer = new builder.LuisRecognizer(model);
 var intents = new builder.IntentDialog({recognizers: [recognizer]});
 
 bot.dialog('/', intents);
-bot.dialog('/prefs2', [
-	function(session) {
-		session.send('In dialog prefs2');
-		session.endDialog();
-	}
-]);
 
 intents.matches('ManageProfile', [
 	function(session, args, next) {
@@ -57,14 +52,6 @@ intents.matches('ManageProfile', [
 			default:
 				session.send("Sorry I didn't recognize what you wanted to manage.");
 		}
-		// if(results.response.entity='Name') {
-		// 	session.beginDialog('/profile');
-		// 	//next();
-		// }
-		// if(results.response.entity='Tool Preference') {
-		// 	session.beginDialog('/prefs2');
-		// 	//next();
-		// }
 	},
 	function (session, results) {
 			session.send('Hello %s! Your current tool preference is %s.', session.userData.name, session.userData.toolPref);
@@ -78,6 +65,51 @@ intents.matches(/^goodbye/i, [
 		session.beginDialog('/goodbye');
 	}
 ])
+
+var pages;
+intents.matches(/^drupal/i, [
+	function(session) {
+		drupal.GetPages(function(error, response, body) {
+				if(!error && response.statusCode == 200) {
+					//var data = JSON.parse(body);
+					console.log(body);
+					//var prompts = [];
+					pages = {};
+					//session.dialogData.pages = [];
+					body.list.forEach(function itemFunc(item, index) {
+    				    	//session.dialogData.pages[item.title] = item.url;
+							//prompts[0] = item.title;
+							pages[item.title] = {'url': item.url};
+						});
+					console.log(pages);
+				} else {
+					console.log(error);
+					console.log(response.statusCode);
+				}
+				if(pages) {
+					builder.Prompts.choice(session, "I found the following pages", pages);
+				} else {
+					session.endDialog("I didn't find anything.");
+				}
+			}
+		);	
+	},
+	function (session, results) {
+			console.log(pages[results.response.entity].url);
+			var msg = new builder.Message(session)
+				.textFormat(builder.TextFormat.xml)
+				.attachments([
+					new builder.HeroCard(session)
+						.title(results.response.entity)
+						.subtitle("Click to open")
+						.text("You may have to log in after selecting.")
+						.tap(builder.CardAction.openUrl(session, pages[results.response.entity].url))
+				]);
+			session.send(msg);
+	}
+])
+
+
 
 intents.onDefault([
 		function(session, args, next) {
