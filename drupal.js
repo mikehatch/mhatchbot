@@ -14,13 +14,13 @@ var basicAuthOptions = {
     }
 }
 
-//request(basicAuthOptions, callback);
+request(basicAuthOptions, callback);
 
 function callback(error, response, body) {
     if(!error && response.statusCode == 200) {
         //var data = JSON.parse(body);
         console.log(body);
-        body.list.forEach(itemFunc);
+        //body.list.forEach(itemFunc);
     } else {
         console.log(error);
         console.log(response.statusCode);
