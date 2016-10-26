@@ -9,7 +9,7 @@ var basicAuthOptions = {
     //jar:true,
     auth: {
         'user': 'restws_bot',
-        'pass': 'restws79(bot',
+        'pass': env.DRUPAL_RESTUSER_PW,
         'sendImmediately': true
     }
 }

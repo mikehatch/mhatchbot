@@ -2,7 +2,7 @@
   "name": "mhatchbot",
   "version": "1.0.0",
   "description": "Testing first bot using ms bot framework",
-  "main": "index.js",
+  "main": "drupal.js",
   "scripts": {
     "test": "test"
   },
