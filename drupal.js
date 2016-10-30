@@ -1,7 +1,7 @@
 var request = require('request');
 var EventEmitter = require('events');
-class MyEmitter extends EventEmitter{};
-const myEmitter = new MyEmitter(); 
+//class MyEmitter extends EventEmitter{};
+//const myEmitter = new MyEmitter(); 
 
 var basicAuthOptions = {
     url: 'https://mhatchdp7c.azurewebsites.net/node.json',

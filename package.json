@@ -17,7 +17,8 @@
     "node": "6.6.0"
   },
   "dependencies": {
-    "botbuilder": "^3.2.3",
-    "restify": "^4.1.1"
+    "botbuilder": "^3.4.2",
+    "request": "^2.76.0",
+    "restify": "^4.2.0"
   }
 }

@@ -79,7 +79,7 @@ intents.matches(/^drupal/i, [
 					body.list.forEach(function itemFunc(item, index) {
     				    	//session.dialogData.pages[item.title] = item.url;
 							//prompts[0] = item.title;
-							pages[item.title] = {'url': item.url};
+							pages[item.title] = {'url': item.url, "title": item.title};
 						});
 					console.log(pages);
 				} else {
@@ -105,6 +105,16 @@ intents.matches(/^drupal/i, [
 						.text("You may have to log in after selecting.")
 						.tap(builder.CardAction.openUrl(session, pages[results.response.entity].url))
 				]);
+			if(session.message.address.channelId === "webchat") {
+				msg = new builder.Message(session)
+				.textFormat(builder.TextFormat.markdown)
+				.text("[" + pages[results.response.entity].title + "](" + pages[results.response.entity].url + ")")
+			}
+			if(session.message.address.channelId === "slack") {
+				msg = new builder.Message(session)
+				.textFormat(builder.TextFormat.markdown)
+				.text("<" + pages[results.response.entity].url + "|" + pages[results.response.entity].title + ">")
+			}
 			session.send(msg);
 	}
 ])
