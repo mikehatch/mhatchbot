@@ -1,6 +1,10 @@
+
 var restify = require('restify');
 var builder = require('botbuilder');
+var moment = require('moment'); //For deailing with UNIX timestamps returned from drupal
+//var jsonsql = require('jsonsql');
 var drupal = require('./drupal.js');
+//var slack = require('./slack.js');
 
 //====================
 // Bot Setup
@@ -19,6 +23,9 @@ var connector = new builder.ChatConnector({
 });
 var bot = new builder.UniversalBot(connector);
 //var intents = new builder.IntentDialog();
+//this sets up a custom dialog prompt from slack.js 
+slack.create(bot);
+
 server.post('/api/messages', connector.listen());
 
 // LUIS model
@@ -72,16 +79,24 @@ intents.matches(/^drupal/i, [
 		drupal.GetPages(function(error, response, body) {
 				if(!error && response.statusCode == 200) {
 					//var data = JSON.parse(body);
-					console.log(body);
+					//console.log(body);
 					//var prompts = [];
 					pages = {};
+					//pages = jsonsql(body.list, "select * from body.list where item.field_event_date[0].value > " + now);
 					//session.dialogData.pages = [];
 					body.list.forEach(function itemFunc(item, index) {
-    				    	//session.dialogData.pages[item.title] = item.url;
+							//Check that the start date of the item is not before this moment
+    				    	if(moment().isBefore(item.field_event_date[0].value * 1000)) {
+								pages[item.title] = {'url': item.url, "title": item.title, "startdate": moment.unix(item.field_event_date[0].value).toDate() };
+							}
+							//session.dialogData.pages[item.title] = item.url;
 							//prompts[0] = item.title;
-							pages[item.title] = {'url': item.url, "title": item.title};
+<<<<<<< HEAD
+=======
+							pages[item.title] = {'url': item.url};
+>>>>>>> parent of aca234c... modified bot response for webchat and slack channels
 						});
-					console.log(pages);
+					// console.log(pages);
 				} else {
 					console.log(error);
 					console.log(response.statusCode);
@@ -95,31 +110,48 @@ intents.matches(/^drupal/i, [
 		);	
 	},
 	function (session, results) {
-			console.log(pages[results.response.entity].url);
+			//console.log(pages[results.response.entity].url);
 			var msg = new builder.Message(session)
 				.textFormat(builder.TextFormat.xml)
 				.attachments([
 					new builder.HeroCard(session)
 						.title(results.response.entity)
 						.subtitle("Click to open")
-						.text("You may have to log in after selecting.")
+						.text("The next rehearsal is in " + moment(pages[results.response.entity].startdate).fromNow() + ", on " + moment(pages[results.response.entity].startdate).format('ddd MMM Do') )
 						.tap(builder.CardAction.openUrl(session, pages[results.response.entity].url))
+<<<<<<< HEAD
+
+				])				
+				.sourceEvent({
+					webchat: { 
+						"text": "[" + pages[results.response.entity].title + "](" + pages[results.response.entity].url + ")"
+					},
+					slack: { 
+						"text": "<" + pages[results.response.entity].title + "|" + pages[results.response.entity].url + ">",
+						"replace_original": true
+					}
+				});
+
+			console.log(msg);
+=======
 				]);
-			if(session.message.address.channelId === "webchat") {
-				msg = new builder.Message(session)
-				.textFormat(builder.TextFormat.markdown)
-				.text("[" + pages[results.response.entity].title + "](" + pages[results.response.entity].url + ")")
-			}
-			if(session.message.address.channelId === "slack") {
-				msg = new builder.Message(session)
-				.textFormat(builder.TextFormat.markdown)
-				.text("<" + pages[results.response.entity].url + "|" + pages[results.response.entity].title + ">")
-			}
+>>>>>>> parent of aca234c... modified bot response for webchat and slack channels
 			session.send(msg);
 	}
 ])
 
-
+intents.matches(/^slack/i, [
+	function(session) {
+		slack.beginDialog(session);
+	},
+	function(session, results) {
+		if(results.response) {
+			session.send("Correct! Wise man with a towel.");
+		} else {
+			session.send("Sorry you couldn't answer, try again in a million years.");
+		}
+	}
+])
 
 intents.onDefault([
 		function(session, args, next) {

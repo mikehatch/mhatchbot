@@ -17,8 +17,15 @@
     "node": "6.6.0"
   },
   "dependencies": {
+<<<<<<< HEAD
     "botbuilder": "^3.4.2",
+    "moment": "^2.15.2",
     "request": "^2.76.0",
+    "request-debug": "^0.2.0",
     "restify": "^4.2.0"
+=======
+    "botbuilder": "^3.2.3",
+    "restify": "^4.1.1"
+>>>>>>> parent of aca234c... modified bot response for webchat and slack channels
   }
 }
