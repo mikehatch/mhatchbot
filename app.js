@@ -24,11 +24,7 @@ var connector = new builder.ChatConnector({
 var bot = new builder.UniversalBot(connector);
 //var intents = new builder.IntentDialog();
 //this sets up a custom dialog prompt from slack.js 
-<<<<<<< HEAD
 //slack.create(bot);
-=======
-slack.create(bot);
->>>>>>> origin/master
 
 server.post('/api/messages', connector.listen());
 
@@ -117,14 +113,8 @@ intents.matches(/^drupal/i, [
 					new builder.HeroCard(session)
 						.title(results.response.entity)
 						.subtitle("Click to open")
-<<<<<<< HEAD
 						.text("The next event is " + moment(pages[results.response.entity].startdate).fromNow() + ", on " + moment(pages[results.response.entity].startdate).format('ddd MMM Do') )
 						.tap(builder.CardAction.openUrl(session, pages[results.response.entity].url))
-=======
-						.text("The next rehearsal is in " + moment(pages[results.response.entity].startdate).fromNow() + ", on " + moment(pages[results.response.entity].startdate).format('ddd MMM Do') )
-						.tap(builder.CardAction.openUrl(session, pages[results.response.entity].url))
-
->>>>>>> origin/master
 				])				
 				.sourceEvent({
 					webchat: { 
@@ -142,29 +132,17 @@ intents.matches(/^drupal/i, [
 ])
 
 intents.matches(/^slack/i, [
-<<<<<<< HEAD
-	function (session) {
-		slack.beginDialog(session);
-	},
-	function (session, results) {
-		if (results.response) {
-=======
 	function(session) {
 		slack.beginDialog(session);
 	},
 	function(session, results) {
 		if(results.response) {
->>>>>>> origin/master
 			session.send("Correct! Wise man with a towel.");
 		} else {
 			session.send("Sorry you couldn't answer, try again in a million years.");
 		}
 	}
-<<<<<<< HEAD
 ]);
-=======
-])
->>>>>>> origin/master
 
 intents.onDefault([
 	function (session, args, next) {
