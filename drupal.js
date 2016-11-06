@@ -1,14 +1,14 @@
 var request = require('request');
 var EventEmitter = require('events');
-<<<<<<< HEAD
+
  
 //require('request-debug')(request);
 //class MyEmitter extends EventEmitter{};
 //const myEmitter = new MyEmitter(); 
-=======
+
 class MyEmitter extends EventEmitter{};
 const myEmitter = new MyEmitter(); 
->>>>>>> parent of aca234c... modified bot response for webchat and slack channels
+
 
 var basicAuthOptions = {
     //url: 'https://mhatchdp7c.azurewebsites.net/node.json',

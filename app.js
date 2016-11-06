@@ -91,10 +91,9 @@ intents.matches(/^drupal/i, [
 							}
 							//session.dialogData.pages[item.title] = item.url;
 							//prompts[0] = item.title;
-<<<<<<< HEAD
-=======
+
 							pages[item.title] = {'url': item.url};
->>>>>>> parent of aca234c... modified bot response for webchat and slack channels
+
 						});
 					// console.log(pages);
 				} else {
@@ -119,8 +118,6 @@ intents.matches(/^drupal/i, [
 						.subtitle("Click to open")
 						.text("The next rehearsal is in " + moment(pages[results.response.entity].startdate).fromNow() + ", on " + moment(pages[results.response.entity].startdate).format('ddd MMM Do') )
 						.tap(builder.CardAction.openUrl(session, pages[results.response.entity].url))
-<<<<<<< HEAD
-
 				])				
 				.sourceEvent({
 					webchat: { 
@@ -133,9 +130,6 @@ intents.matches(/^drupal/i, [
 				});
 
 			console.log(msg);
-=======
-				]);
->>>>>>> parent of aca234c... modified bot response for webchat and slack channels
 			session.send(msg);
 	}
 ])
