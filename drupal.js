@@ -1,6 +1,11 @@
 var request = require('request');
+<<<<<<< HEAD
 //var EventEmitter = require('events');
 
+=======
+var EventEmitter = require('events');
+ 
+>>>>>>> origin/master
 //require('request-debug')(request);
 //class MyEmitter extends EventEmitter{};
 //const myEmitter = new MyEmitter(); 
@@ -11,7 +16,11 @@ var request = require('request');
 var basicAuthOptions = {
     //url: 'https://mhatchdp7c.azurewebsites.net/node.json',
     //url: 'http://hatch.dev.groupanizer.com/node.json?type=event',
+<<<<<<< HEAD
     url: 'http://hatch.dev.groupanizer.com/node.json?type=event&sort=field_event_date&direction=ASC&limit=4',
+=======
+    url: 'http://hatch.dev.groupanizer.com/node.json?type=event&field_event_type=51&sort=field_event_date&direction=ASC&limit=2',
+>>>>>>> origin/master
     json: true,
     //jar:true,
     // auth: {
