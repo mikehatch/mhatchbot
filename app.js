@@ -120,10 +120,10 @@ intents.matches(/^drupal/i, [
 					webchat: { 
 						"text": "[" + pages[results.response.entity].title + "](" + pages[results.response.entity].url + ")"
 					},
-					slack: { 
-						"text": "<" + pages[results.response.entity].title + "|" + pages[results.response.entity].url + ">",
-						"replace_original": true
-					}
+					// slack: { 
+					// 	"text": "<" + pages[results.response.entity].title + "|" + pages[results.response.entity].url + ">",
+					// 	"replace_original": true
+					// }
 				});
 
 			console.log(msg);
