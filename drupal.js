@@ -1,19 +1,17 @@
 var request = require('request');
-var EventEmitter = require('events');
+//var EventEmitter = require('events');
 
- 
 //require('request-debug')(request);
 //class MyEmitter extends EventEmitter{};
 //const myEmitter = new MyEmitter(); 
 
-class MyEmitter extends EventEmitter{};
-const myEmitter = new MyEmitter(); 
-
+// class MyEmitter extends EventEmitter { };
+//const myEmitter = new MyEmitter();
 
 var basicAuthOptions = {
     //url: 'https://mhatchdp7c.azurewebsites.net/node.json',
     //url: 'http://hatch.dev.groupanizer.com/node.json?type=event',
-    url: 'http://hatch.dev.groupanizer.com/node.json?type=event&field_event_type=51&sort=field_event_date&direction=ASC&limit=2',
+    url: 'http://hatch.dev.groupanizer.com/node.json?type=event&sort=field_event_date&direction=ASC&limit=4',
     json: true,
     //jar:true,
     // auth: {
@@ -27,7 +25,7 @@ var basicAuthOptions = {
 //request(basicAuthOptions, callback);
 
 function callback(error, response, body) {
-    if(!error && response.statusCode == 200) {
+    if (!error && response.statusCode == 200) {
         //var data = JSON.parse(body);
         console.log(body);
         //body.list.forEach(itemFunc);
@@ -38,7 +36,7 @@ function callback(error, response, body) {
 }
 
 var data;
-function GetPages(cb) { 
+function GetPages(cb) {
     request(basicAuthOptions, cb);
 }
 
