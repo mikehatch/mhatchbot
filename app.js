@@ -1,10 +1,8 @@
 
 var restify = require('restify');
 var builder = require('botbuilder');
-var moment = require('moment'); //For deailing with UNIX timestamps returned from drupal
-//var jsonsql = require('jsonsql');
-var drupal = require('./drupal.js');
 //var slack = require('./slack.js');
+var choirgenius = require('./choirgenius/choirgenius.js');
 
 //====================
 // Bot Setup
@@ -22,16 +20,17 @@ var connector = new builder.ChatConnector({
 	appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 var bot = new builder.UniversalBot(connector);
-//var intents = new builder.IntentDialog();
-//this sets up a custom dialog prompt from slack.js 
-//slack.create(bot);
+//
+choirgenius.create(bot, { /* options */ });
 
 server.post('/api/messages', connector.listen());
 
 // LUIS model
 var model = 'https://api.projectoxford.ai/luis/v1/application?id=2ac782de-b92c-4068-a8d3-ffe8fe85de25&subscription-key=21b9f3214c2743c2b7f803bbbda93750';
 var recognizer = new builder.LuisRecognizer(model);
-var intents = new builder.IntentDialog({ recognizers: [recognizer] });
+var eventmodel = 'https://api.projectoxford.ai/luis/v1/application?id=3720cc29-00de-4796-9bd9-8a713802286e&subscription-key=21b9f3214c2743c2b7f803bbbda93750';
+var eventrecognizer = new builder.LuisRecognizer(eventmodel);
+var intents = new builder.IntentDialog({ recognizers: [recognizer, eventrecognizer] });
 
 bot.dialog('/', intents);
 
@@ -73,61 +72,16 @@ intents.matches(/^goodbye/i, [
 	}
 ]);
 
-var pages;
+//var pages;
 intents.matches(/^drupal/i, [
-	function(session) {
-		drupal.GetPages(function(error, response, body) {
-				if(!error && response.statusCode == 200) {
-					//var data = JSON.parse(body);
-					//console.log(body);
-					//var prompts = [];
-					pages = {};
-					//pages = jsonsql(body.list, "select * from body.list where item.field_event_date[0].value > " + now);
-					//session.dialogData.pages = [];
-					body.list.forEach(function itemFunc(item, index) {
-							//Check that the start date of the item is not before this moment
-    				    	if(moment().isBefore(item.field_event_date[0].value * 1000)) {
-								pages[item.title] = {'url': item.url, "title": item.title, "startdate": moment.unix(item.field_event_date[0].value).toDate() };
-							}
-							//session.dialogData.pages[item.title] = item.url;
-							//prompts[0] = item.title;
-						});
-					// console.log(pages);
-				} else {
-					console.log(error);
-					console.log(response.statusCode);
-				}
-				if(pages) {
-					builder.Prompts.choice(session, "I found the following items", pages);
-				} else {
-					session.endDialog("I didn't find anything.");
-				}
-			}
-		);	
-	},
-	function (session, results) {
-			//console.log(pages[results.response.entity].url);
-			var msg = new builder.Message(session)
-				.textFormat(builder.TextFormat.xml)
-				.attachments([
-					new builder.HeroCard(session)
-						.title(results.response.entity)
-						.subtitle("Click to open")
-						.text("The next event is " + moment(pages[results.response.entity].startdate).fromNow() + ", on " + moment(pages[results.response.entity].startdate).format('ddd MMM Do') )
-						.tap(builder.CardAction.openUrl(session, pages[results.response.entity].url))
-				])				
-				.sourceEvent({
-					webchat: { 
-						"text": "[" + pages[results.response.entity].title + "](" + pages[results.response.entity].url + ")"
-					},
-					// slack: { 
-					// 	"text": "<" + pages[results.response.entity].title + "|" + pages[results.response.entity].url + ">",
-					// 	"replace_original": true
-					// }
-				});
+	function(session, args) {
+		choirgenius.getevents(session, args);
+	}
+])
 
-			console.log(msg);
-			session.send(msg);
+intents.matches('GetEvent', [
+	function(session, args) {
+		choirgenius.getevents(session, args);
 	}
 ])
 
