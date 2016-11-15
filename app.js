@@ -30,7 +30,11 @@ var model = 'https://api.projectoxford.ai/luis/v1/application?id=2ac782de-b92c-4
 var recognizer = new builder.LuisRecognizer(model);
 var eventmodel = 'https://api.projectoxford.ai/luis/v1/application?id=3720cc29-00de-4796-9bd9-8a713802286e&subscription-key=21b9f3214c2743c2b7f803bbbda93750';
 var eventrecognizer = new builder.LuisRecognizer(eventmodel);
-var intents = new builder.IntentDialog({ recognizers: [recognizer, eventrecognizer] });
+var musicmodel = 'https://api.projectoxford.ai/luis/v2.0/apps/af356d34-1e06-4d81-af99-2b7dfb39276a?subscription-key=21b9f3214c2743c2b7f803bbbda93750';
+var musicrecognizer = new builder.LuisRecognizer(musicmodel);
+
+var intents = new builder.IntentDialog({ recognizers: [recognizer, eventrecognizer, musicrecognizer] });
+
 
 bot.dialog('/', intents);
 
@@ -82,6 +86,13 @@ intents.matches(/^drupal/i, [
 intents.matches('GetEvent', [
 	function(session, args) {
 		choirgenius.getevents(session, args);
+	}
+])
+
+intents.matches('GetMusic', [
+	function(session, args) {
+		//choirgenius.getevents(session, args);
+		session.send("I see you intend to get music - I'm working on that.");
 	}
 ])
 
