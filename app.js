@@ -114,7 +114,20 @@ intents.onDefault([
 		}
 	},
 	function (session, results) {
-		session.send('Hello %s! Your current tool preference is %s.', session.userData.name, session.userData.toolPref);
+		if(session.message.address.conversation.isGroup) {
+			var msg = new builder.Message(session)
+			.address.conversation.id = "B2N5X6YS1:T2DTRPDB3"
+			.text("You are in a channel, here is an ephermal message")
+            .attachments([])				
+				.sourceEvent({
+					slack: { 
+						"response_type": "ephemeral"
+					}
+				});
+			session.send(msg);
+		} else {
+			session.send('Hello %s! Your current tool preference is %s.', session.userData.name, session.userData.toolPref);	
+		}
 	}
 ]);
 
